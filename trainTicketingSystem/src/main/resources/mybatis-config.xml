@@ -20,12 +20,12 @@
 		<package name="com.ljw.blog.entity"/>
 	</typeAliases>
 	
-	<plugins>
-		<!--Note:注意5以后的版本应该改为PageHelperInceptor-->
+	<!--<plugins>
+		&lt;!&ndash;Note:注意5以后的版本应该改为PageHelperInceptor&ndash;&gt;
 		<plugin interceptor="com.github.pagehelper.PageHelper">
-			<!--分页参数合理化  -->
+			&lt;!&ndash;分页参数合理化  &ndash;&gt;
 			<property name="reasonable" value="true"/>
 		</plugin>
-	</plugins>
+	</plugins>-->
 
 </configuration>

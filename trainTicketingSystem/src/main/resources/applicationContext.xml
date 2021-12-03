@@ -23,15 +23,66 @@
 		<property name="url" value="${mysql.url}" />
 		<property name="username" value="${mysql.username}" />
 		<property name="password" value="${mysql.password}" />
+		<property name="validationQuery" value="SELECT 1"></property>
 	</bean>
 	
 	
 	<!--3.配置与mybaits的整合-->
-	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+	<!--<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
 		<property name="configLocation" value="classpath:mybatis-config.xml"></property>
 		<property name="dataSource" ref="pooledDataSource"></property>
 		<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+	</bean>-->
+	
+	<!--3.配置与MP的整合-->
+	<bean id="sqlSessionFactory" class="com.baomidou.mybatisplus.extension.spring.MybatisSqlSessionFactoryBean">
+		<!--数据源-->
+		<property name="dataSource" ref="pooledDataSource"></property>
+		<!--加载mybatis配置文件，不能与configuration属性一起指定-->
+		<!--<property name="configLocation" value="classpath:mybatis-config.xml"></property>-->
+		<!--mapper配置文件位置-->
+		<property name="mapperLocations" value="classpath:mapper/*.xml"></property>
+		<!--注入MP配置-->
+		<property name="configuration" ref="configuration"/>
+		<!--注入MP的全局配置-->
+		<property name="globalConfig" ref="globalConfig"/>
+		<!--插件-->
+		<property name="plugins">
+			<list>
+				<!--分页插件，注意与MP3.3版本完全不同-->
+				<bean class="com.baomidou.mybatisplus.extension.plugins.MybatisPlusInterceptor">
+					<property name="interceptors">
+						<array>
+							<bean class="com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerInterceptor">
+								<constructor-arg name="dbType" value="MYSQL"></constructor-arg>
+							</bean>
+						</array>
+					</property>
+				</bean>
+			</list>
+		</property>
 	</bean>
+	
+	<!--3.1 MP的配置-->
+	<bean id="configuration" class="com.baomidou.mybatisplus.core.MybatisConfiguration">
+		<!--开启驼峰命名映射规则-->
+		<property name="mapUnderscoreToCamelCase" value="true"></property>
+		<!--开启二级缓存-->
+		<property name="cacheEnabled" value="true"></property>
+	</bean>
+	
+	<!--3.4 MP的全局配置-->
+	<bean id="globalConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig">
+		<!--注入处理数据库的配置-->
+		<property name="dbConfig" ref="dbConfig"/>
+	</bean>
+	
+	<!--3.3 MP的处理数据库配置-->
+	<bean id="dbConfig" class="com.baomidou.mybatisplus.core.config.GlobalConfig.DbConfig">
+		<!--全局主键策略-->
+		<property name="idType" value="AUTO"></property>
+	</bean>
+	
 	<!--配置扫描器，将mybatis接口的实现加入到ioc容器中-->
 	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
 		<!--扫描所有dao接口的实现，加入到ioc容器中 -->
